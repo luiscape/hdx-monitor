@@ -1,0 +1,36 @@
+mongo:
+  environment:
+    MONGODB_USER_NAME: foo
+    MONGODB_USER_PASSWORD: bar
+    MONGODB_DATABASE: baz
+  tty: true
+  image: luiscape/hdx-monitor-mongo:latest
+  volumes:
+  - ********:/data
+  stdin_open: true
+funnel-stats:
+  tty: true
+  image: luiscape/hdx-monitor-funnel-stats:v.0.1.0
+  volumes:
+  - ********:/hdx-monitor-funnel-stats/secrets
+  stdin_open: true
+datastore:
+  environment:
+    DEFAULT_API_KEY: xxxxxxxx-xxxx-xxxx-xxxx-xxxxxxxxxxxx
+  tty: true
+  image: luiscape/hdx-monitor-datastore:v.0.1.3
+  stdin_open: true
+server:
+  environment:
+    MONGODB_USER_NAME: xxxx
+    MONGODB_USER_PASSWORD: xxxx
+    MONGODB_DATABASE: xxxx
+  tty: true
+  image: luiscape/hdx-monitor-server:v.0.1.0
+  links:
+  - 'funnel-stats:'
+  - 'datastore:'
+  - 'mongo:'
+  stdin_open: true
+  ports:
+  - '80:8080'
