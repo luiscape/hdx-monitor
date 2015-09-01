@@ -1,36 +1,74 @@
+##############################################################################
+# HDX MONITOR:
+#
+#  Databases:
+#   - MongoDB
+#   - Redis
+#
+#  Services:
+#   - Funnel Stats: for collecting statistics about HDX.
+#   - DataStore: for creating DataStores on HDX.
+#   - Ageing Service: for calculating the age of datasets on HDX.
+#
+#  UI Wrapper:
+#   - Server: connects to all services and provides a unified experience.
+#
+##############################################################################
+
+redis:
+  image: redis:latest
+  stdin_open: true
+  tty: true
+
 mongo:
+  tty: true
+  image: luiscape/hdx-monitor-mongo:latest
+  volumes:
+  - ./data:/data
+  stdin_open: true
   environment:
     MONGODB_USER_NAME: foo
     MONGODB_USER_PASSWORD: bar
     MONGODB_DATABASE: baz
-  tty: true
-  image: luiscape/hdx-monitor-mongo:latest
-  volumes:
-  - ********:/data
-  stdin_open: true
-funnel-stats:
-  tty: true
-  image: luiscape/hdx-monitor-funnel-stats:v.0.1.0
-  volumes:
-  - ********:/hdx-monitor-funnel-stats/secrets
-  stdin_open: true
+
 datastore:
   environment:
     DEFAULT_API_KEY: xxxxxxxx-xxxx-xxxx-xxxx-xxxxxxxxxxxx
   tty: true
   image: luiscape/hdx-monitor-datastore:v.0.1.3
   stdin_open: true
+
+ageing-service:
+  environment:
+    CKAN_API_KEY: xxxxxxxx-xxxx-xxxx-xxxx-xxxxxxxxxxxx  # sysadmin API key
+    CKAN_REMOTE_URL: https://data.hdx.rwlabs.org
+    CKAN_REMOTE_URL: https://data.hdx.rwlabs.org
+    CKAN_USER_AGENT: AgeingService0.3.5
+  tty: true
+  image: luiscape/hdx-monitor-ageing-service:v.0.3.5
+  stdin_open: true
+  volumes:
+  - ./ageing_service_data:/data
+
+# funnel-stats:
+#   tty: true
+#   image: luiscape/hdx-monitor-funnel-stats:v.0.1.0
+#   volumes:
+#   - ********:/hdx-monitor-funnel-stats/secrets
+#   stdin_open: true
+
 server:
   environment:
-    MONGODB_USER_NAME: xxxx
-    MONGODB_USER_PASSWORD: xxxx
-    MONGODB_DATABASE: xxxx
+    MONGODB_USER_NAME: foo
+    MONGODB_USER_PASSWORD: bar
+    MONGODB_DATABASE: baz
   tty: true
-  image: luiscape/hdx-monitor-server:v.0.1.0
+  image: luiscape/hdx-monitor-server:latest
   links:
-  - 'funnel-stats:'
+  # - 'funnel-stats:'
   - 'datastore:'
   - 'mongo:'
+  - 'ageing-service:age'
   stdin_open: true
   ports:
   - '80:8080'
