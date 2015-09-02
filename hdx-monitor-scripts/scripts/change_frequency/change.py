@@ -3,7 +3,7 @@
 
 import json
 import requests
-
+from os import getenv
 
 def ChangeFrequency(id=None, frequency=None):
   '''Changes the frequency of a dataset in HDX.'''
@@ -16,7 +16,7 @@ def ChangeFrequency(id=None, frequency=None):
   # TODO: API hard-coded.
   #
   h = {
-    'X-CKAN-API-Key' : 'a6863277-f35e-4f50-af85-78a2d9ebcdd3',
+    'X-CKAN-API-Key' : getenv('HDX_KEY', None),
     'Content-Type' : 'application/json'
     }
   d = { 'id' : id, 'data_update_frequency' : frequency }
