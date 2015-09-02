@@ -45,7 +45,7 @@ ageing-service:
   links:
   - 'redis:redis'
   volumes:
-  - ./ageing_service_data:/data
+  - ./ageing_service_data:/hdx-monitor-ageing-service/data
   ports:
   - '3000:3000'
   environment:
