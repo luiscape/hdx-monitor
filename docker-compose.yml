@@ -39,16 +39,18 @@ datastore:
   stdin_open: true
 
 ageing-service:
-  environment:
-    CKAN_API_KEY: xxxxxxxx-xxxx-xxxx-xxxx-xxxxxxxxxxxx  # sysadmin API key
-    CKAN_REMOTE_URL: https://data.hdx.rwlabs.org
-    CKAN_REMOTE_URL: https://data.hdx.rwlabs.org
-    CKAN_USER_AGENT: AgeingService0.3.5
   tty: true
   image: luiscape/hdx-monitor-ageing-service:v.0.3.5
   stdin_open: true
+  links:
+  - 'redis:redis'
   volumes:
   - ./ageing_service_data:/data
+  environment:
+    CKAN_API_KEY: xxxxxxxx-xxxx-xxxx-xxxx-xxxxxxxxxxxx  # sysadmin API key
+    CKAN_REMOTE_URL: https://data.hdx.rwlabs.org
+    CKAN_PROD_URL: https://data.hdx.rwlabs.org
+    CKAN_USER_AGENT: AgeingService0.3.5
 
 # funnel-stats:
 #   tty: true
@@ -58,10 +60,6 @@ ageing-service:
 #   stdin_open: true
 
 server:
-  environment:
-    MONGODB_USER_NAME: foo
-    MONGODB_USER_PASSWORD: bar
-    MONGODB_DATABASE: baz
   tty: true
   image: luiscape/hdx-monitor-server:latest
   links:
@@ -72,3 +70,7 @@ server:
   stdin_open: true
   ports:
   - '80:8080'
+  environment:
+    MONGODB_USER_NAME: foo
+    MONGODB_USER_PASSWORD: bar
+    MONGODB_DATABASE: baz
