@@ -63,7 +63,7 @@ ageing-service:
 
 server:
   tty: true
-  image: luiscape/hdx-monitor-server:latest
+  image: luiscape/hdx-monitor-server:v.0.1.4
   links:
   # - 'funnel-stats:'
   - 'datastore:'
